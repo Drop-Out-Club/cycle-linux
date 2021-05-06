@@ -1,1 +1,7 @@
 *~
+.env
+
+# JS
+node_modules
+# login.js after being building with babel
+index.js
