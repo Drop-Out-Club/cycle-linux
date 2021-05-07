@@ -47,7 +47,7 @@ echo $CONTAINER_IP:$CONTAINER_PORT
 echo DONE
 
 
-sleep 50
+sleep 90
 
 ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[$CONTAINER_IP]:$CONTAINER_PORT"
 
