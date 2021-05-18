@@ -40,6 +40,6 @@ sleep 90
 ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[$CONTAINER_IP]:$CONTAINER_PORT"
 
 adb kill-server
-( ssh  -o "StrictHostKeyChecking no" root@$CONTAINER_IP -L 5037:localhost:5037 -R 27183:localhost:27183 -L 4000:localhost:4000 -L 4001:localhost:554 -p $CONTAINER_PORT & echo $! >&3 ) 3>pid | scrcpy
+( ( ssh  -o "StrictHostKeyChecking no" root@$CONTAINER_IP -L 5037:localhost:5037 -R 27183:localhost:27183 -L 4000:localhost:4000 -L 4001:localhost:554 -p $CONTAINER_PORT & echo $! >&3 ) 3>pid | scrcpy ) || ( kill $(<pid) && sleep 30 && ( ssh  -o "StrictHostKeyChecking no" root@$CONTAINER_IP -L 5037:localhost:5037 -R 27183:localhost:27183 -L 4000:localhost:4000 -L 4001:localhost:554 -p $CONTAINER_PORT & echo $! >&3 ) 3>pid | scrcpy )
 kill $(<pid)
 rm pid
