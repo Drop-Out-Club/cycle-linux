@@ -18,8 +18,13 @@ ACCESS_TOKEN=$(node index.js $1 $2)
 SCREEN_X=1920
 SCREEN_Y=1080
 
+EXTRA_BODY=""
+if [[ "$4" == "--force-new" ]]; then
+	EXTRA_BODY=', "force_new": "true"'
+fi
+
 PUB_KEY=$(cat $3)
-BODY="{\"pub_key\": \"$PUB_KEY\", \"screen\":{\"res_x\": $SCREEN_X, \"res_y\": $SCREEN_Y}}"
+BODY="{\"pub_key\": \"$PUB_KEY\", \"screen\":{\"res_x\": $SCREEN_X, \"res_y\": $SCREEN_Y}$EXTRA_BODY}"
 
 RESPONSE=$(curl $REMOTE_IP -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" -d "$BODY")
 
