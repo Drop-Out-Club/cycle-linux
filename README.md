@@ -6,6 +6,7 @@
 - ssh
 - curl
 - adb
+- [scrcpy](https://github.com/Genymobile/scrcpy)
 
 ### Install other dependancies
 ```bash
