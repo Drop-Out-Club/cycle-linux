@@ -40,7 +40,7 @@ CONTAINER_PORT=$(echo $RESPONSE_BODY | jq .port)
 
 echo Connecting to: $CONTAINER_IP:$CONTAINER_PORT
 
-sleep 90
+sleep 20
 
 ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[$CONTAINER_IP]:$CONTAINER_PORT"
 
