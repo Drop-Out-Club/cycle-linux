@@ -1,7 +1,7 @@
 # Setup
 
 ### Dependancies
-- npm
+- npm v14.17.0 (just use nvm to install this version)
 - jq
 - ssh
 - curl
@@ -23,9 +23,11 @@ npm run-script build
 ./run.sh <username> <password> <path to SSH public key file (for whatever your default SSH key is)>
 ```
 
-# Raspberry Pi (armhf, raspbian)
+# Raspberry Pi (armhf)
 
 If your display is all spotty and rainbow-y, possible fix [here](https://www.waveshare.com/wiki/5.5inch_HDMI_AMOLED).
+
+## Raspbian
 
 scrcpy will need to be built from source. That's pretty easy. Just follow the guide on the scrcpy repo.
 
@@ -46,4 +48,19 @@ Which requires:
 >> Which requires:
 >> - [libc6](http://ftp.br.debian.org/debian/pool/main/g/glibc/libc6_2.31-12_armhf.deb)
 
-And that version of libc6 apparently breaks everything, so this currently can't be installed on Raspberry Pi. I'm leaving this here anyway, since I already found all the packages.
+And that version of libc6 apparently breaks everything, so this currently can't be installed on Raspberry Pi with Raspbian. I'm leaving this here anyway, since I already found all the packages.
+
+## Manjaro
+
+scrcpy can either be built from source manually, or you can use the AUR package. If you want to do it manually, you'll need to install the following packages:
+- sdl2
+- meson
+- wget
+- gcc
+- git
+- pkg-config
+- adb
+
+From there, you can just follow the instructions for building scrcpy in the scrcpy repo (skipping the dependancy install, of course).
+
+After that, just install the cycle-linux dependancies, build it, and then run as normal.
