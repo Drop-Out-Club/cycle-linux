@@ -31,13 +31,14 @@ fi
 PUB_KEY=$(cat $3)
 BODY="{\"pub_key\": \"$PUB_KEY\", \"screen\":{\"res_x\": $SCREEN_X, \"res_y\": $SCREEN_Y}$EXTRA_BODY}"
 
-RESPONSE=$(curl $REMOTE_IP -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" -d "$BODY" || echo FAIL)
+RESPONSE=$(curl $REMOTE_IP -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" -d "$BODY" --max-time 600 || echo FAIL)
 
 #Verify director returned succesfully
 if [[ "$RESPONSE" == "FAIL" ]]; then
 	echo "Error communicating with director."
 	exit 1
 fi
+	
 
 RESPONSE_BODY=$(echo $RESPONSE | jq .body | sed 's/\\//g')
 RESPONSE_BODY=$(echo $RESPONSE_BODY | sed 's/^.\(.*\).$/\1/')
