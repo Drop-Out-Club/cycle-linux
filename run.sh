@@ -14,6 +14,11 @@ source .env
 # TODO: Verify successful login
 ACCESS_TOKEN=$(node index.js $1 $2)
 
+# Check if login failed
+
+echo $ACCESS_TOKEN | ( grep code > /dev/null ) && FAILED=1
+[[ "$FAILED" == "1" ]] && echo $ACCESS_TOKEN && exit 1
+
 # TODO: Get actual screen size
 SCREEN_X=1920
 SCREEN_Y=1080
@@ -26,9 +31,13 @@ fi
 PUB_KEY=$(cat $3)
 BODY="{\"pub_key\": \"$PUB_KEY\", \"screen\":{\"res_x\": $SCREEN_X, \"res_y\": $SCREEN_Y}$EXTRA_BODY}"
 
-RESPONSE=$(curl $REMOTE_IP -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" -d "$BODY")
+RESPONSE=$(curl $REMOTE_IP -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" -d "$BODY" || echo FAIL)
 
-#TODO: Verify director returned 200
+#Verify director returned succesfully
+if [[ "$RESPONSE" == "FAIL" ]]; then
+	echo "Error communicating with director."
+	exit 1
+fi
 
 RESPONSE_BODY=$(echo $RESPONSE | jq .body | sed 's/\\//g')
 RESPONSE_BODY=$(echo $RESPONSE_BODY | sed 's/^.\(.*\).$/\1/')
@@ -36,6 +45,13 @@ RESPONSE_BODY=$(echo $RESPONSE_BODY | sed 's/^.\(.*\).$/\1/')
 CONTAINER_IP=$(echo $RESPONSE_BODY | jq .ip)
 CONTAINER_IP=$(echo $CONTAINER_IP | sed 's/^.\(.*\).$/\1/')
 CONTAINER_PORT=$(echo $RESPONSE_BODY | jq .port)
+
+# Verify we actually recieved a port and IP
+
+if [[ -z $CONTAINER_PORT || -z $CONTAINER_IP ]]; then
+	echo "Port/IP error"
+	exit 1
+fi
 
 
 echo Connecting to: $CONTAINER_IP:$CONTAINER_PORT
