@@ -23,9 +23,16 @@ echo $ACCESS_TOKEN | ( grep code > /dev/null ) && FAILED=1
 SCREEN_X=1920
 SCREEN_Y=1080
 
+DESKTOP_MODE=0
+
 EXTRA_BODY=""
-if [[ "$4" == "--force-new" ]]; then
+if [[ "$4" == "--force-new" || "$5" == "--force-new" ]]; then
 	EXTRA_BODY=', "force_new": "true"'
+fi
+
+if [[ "$4" == "--desktop" || "$5" == "--desktop" ]]; then
+	EXTRA_BODY=$EXTRA_BODY', "kind": 1'
+	DESKTOP_MODE=1
 fi
 
 PUB_KEY=$(cat $3)
@@ -61,7 +68,12 @@ sleep 20
 
 ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[$CONTAINER_IP]:$CONTAINER_PORT"
 
-adb kill-server
-( ssh  -o "StrictHostKeyChecking no" root@$CONTAINER_IP -L 5037:localhost:5037 -R 27183:localhost:27183 -L 4000:localhost:4000 -L 4001:localhost:554 -p $CONTAINER_PORT & echo $! >&3 ) 3>pid | scrcpy -f
-kill $(<pid)
-rm pid
+if [[ "$DESKTOP_MODE" == "1" ]]; then
+	echo "Use '$BROWSER http://127.0.0.1:6080' to connect"
+	ssh  -o "StrictHostKeyChecking no" user@$CONTAINER_IP -L 0.0.0.0:6080:localhost:6080 -p $CONTAINER_PORT -i ${3%.*}
+else
+	adb kill-server
+	( ssh  -o "StrictHostKeyChecking no" root@$CONTAINER_IP -L 5037:localhost:5037 -R 27183:localhost:27183 -L 4000:localhost:4000 -L 4001:localhost:554 -p $CONTAINER_PORT & echo $! >&3 ) 3>pid | scrcpy -f
+	kill $(<pid)
+	rm pid
+fi
