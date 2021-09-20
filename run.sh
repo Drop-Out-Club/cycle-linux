@@ -12,7 +12,7 @@ source .env
 # Login
 
 # TODO: Verify successful login
-ACCESS_TOKEN=$(node index.js $1 $2)
+ACCESS_TOKEN=$(node index.js --login $1 $2)
 
 # Check if login failed
 
